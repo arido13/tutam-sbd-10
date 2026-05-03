@@ -1,0 +1,220 @@
+:root {
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #e5eef8;
+  background:
+    radial-gradient(circle at top left, rgba(71, 132, 255, 0.35), transparent 30%),
+    radial-gradient(circle at top right, rgba(10, 215, 182, 0.2), transparent 26%),
+    linear-gradient(180deg, #0f172a 0%, #111827 50%, #0b1020 100%);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  min-height: 100vh;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.page-shell {
+  width: min(1120px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 48px 0 64px;
+  display: grid;
+  gap: 24px;
+}
+
+.hero-card,
+.list-card {
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  box-shadow: 0 18px 60px rgba(2, 6, 23, 0.35);
+  border-radius: 24px;
+  padding: 28px;
+}
+
+.hero-card {
+  display: grid;
+  gap: 24px;
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  color: #7dd3fc;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.8rem;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+h1 {
+  font-size: clamp(2rem, 5vw, 4rem);
+  line-height: 1.05;
+  max-width: 13ch;
+}
+
+.subtext {
+  margin-top: 14px;
+  color: #cbd5e1;
+  max-width: 62ch;
+  line-height: 1.65;
+}
+
+.todo-form {
+  display: grid;
+  gap: 10px;
+}
+
+.todo-form label {
+  color: #cbd5e1;
+  font-weight: 600;
+}
+
+.input-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+}
+
+input {
+  width: 100%;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  border-radius: 16px;
+  background: rgba(15, 23, 42, 0.8);
+  color: #f8fafc;
+  padding: 14px 16px;
+  outline: none;
+}
+
+input:focus {
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.15);
+}
+
+button {
+  border: 0;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #38bdf8, #2563eb);
+  color: white;
+  padding: 14px 18px;
+  font-weight: 700;
+}
+
+button:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.list-card {
+  display: grid;
+  gap: 18px;
+}
+
+.list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.list-header span {
+  color: #94a3b8;
+}
+
+.alert,
+.empty-state,
+.todo-item {
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  background: rgba(15, 23, 42, 0.6);
+  border-radius: 18px;
+}
+
+.alert {
+  padding: 14px 16px;
+  color: #fecaca;
+}
+
+.empty-state {
+  padding: 22px;
+  color: #cbd5e1;
+}
+
+.todo-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 12px;
+}
+
+.todo-item {
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.todo-title {
+  font-weight: 700;
+  color: #f8fafc;
+  margin-bottom: 6px;
+}
+
+.todo-meta {
+  font-size: 0.9rem;
+  color: #94a3b8;
+}
+
+.danger {
+  background: linear-gradient(135deg, #fb7185, #ef4444);
+}
+
+@media (max-width: 720px) {
+  .page-shell {
+    padding: 20px 0 40px;
+  }
+
+  .hero-card,
+  .list-card {
+    padding: 20px;
+  }
+
+  .input-row {
+    grid-template-columns: 1fr;
+  }
+
+  .todo-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .todo-item button {
+    width: 100%;
+  }
+}
