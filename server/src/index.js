@@ -46,6 +46,15 @@ app.get('/health', (_req, res) => {
   res.json({ status: 'ok' });
 });
 
+app.get('/', (_req, res) => {
+  res.json({
+    name: 'Todo API',
+    health: '/health',
+    auth: ['/api/auth/register', '/api/auth/login'],
+    todos: '/api/todos'
+  });
+});
+
 app.post('/api/auth/register', async (req, res, next) => {
   try {
     const schema = z.object({

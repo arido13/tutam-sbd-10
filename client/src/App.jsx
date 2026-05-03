@@ -149,10 +149,10 @@ function App() {
       <main className="page-shell auth-shell">
         <section className="hero-card auth-card">
           <div className="hero-copy">
-            <p className="eyebrow">SBD Modul 10</p>
-            <h1>Login untuk melihat todo milik akunmu</h1>
+            <p className="eyebrow">tutam sbd modul 10</p>
+            <h1>To Do List</h1>
             <p className="subtext">
-              Setiap akun punya daftar todo yang terpisah. Saat login ulang, data akun yang sama akan dimuat kembali.
+             Masukkan informasi login untuk membuat to do list. Register jika belum memiliki akun.
             </p>
           </div>
 
@@ -170,7 +170,7 @@ function App() {
             <input
               id="username"
               type="text"
-              placeholder="contoh: andi"
+              placeholder="masukkan username di sini"
               value={authForm.username}
               onChange={(event) => setAuthForm((current) => ({ ...current, username: event.target.value }))}
               maxLength={30}
@@ -180,7 +180,7 @@ function App() {
             <input
               id="password"
               type="password"
-              placeholder="minimal 6 karakter"
+              placeholder="minimum 6 karakter"
               value={authForm.password}
               onChange={(event) => setAuthForm((current) => ({ ...current, password: event.target.value }))}
               maxLength={100}
@@ -201,11 +201,8 @@ function App() {
     <main className="page-shell">
       <section className="hero-card">
         <div className="hero-copy">
-          <p className="eyebrow">SBD Modul 10</p>
-          <h1>Todo List per akun dengan React, Express, dan PostgreSQL</h1>
-          <p className="subtext">
-            Sedang login sebagai <strong>{auth.user?.username}</strong>. Todo yang tampil hanya milik akun ini.
-          </p>
+          <h1>Welcome, {auth.user?.username}!</h1>
+          
         </div>
 
         <div className="session-row">
@@ -216,12 +213,12 @@ function App() {
         </div>
 
         <form className="todo-form" onSubmit={handleSubmit}>
-          <label htmlFor="title">Todo baru</label>
+          <label htmlFor="title">To do baru</label>
           <div className="input-row">
             <input
               id="title"
               type="text"
-              placeholder="Contoh: Belajar sistem basis data"
+              placeholder="tuliskan agendamu di sini"
               value={title}
               onChange={(event) => setTitle(event.target.value)}
               maxLength={120}
@@ -235,7 +232,7 @@ function App() {
 
       <section className="list-card">
         <div className="list-header">
-          <h2>Daftar Todo</h2>
+          <h2>To do list milikmu</h2>
           <span>{completedCount} item</span>
         </div>
 
