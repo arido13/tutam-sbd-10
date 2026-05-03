@@ -90,6 +90,55 @@ h1 {
   gap: 10px;
 }
 
+.auth-form {
+  gap: 12px;
+}
+
+.auth-toggle {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.tab,
+.secondary {
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.tab.active {
+  background: linear-gradient(135deg, #38bdf8, #2563eb);
+  border-color: transparent;
+}
+
+.auth-shell {
+  min-height: 100vh;
+  align-items: center;
+}
+
+.auth-card {
+  max-width: 620px;
+  margin: 0 auto;
+}
+
+.session-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.session-badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 10px 14px;
+  background: rgba(125, 211, 252, 0.12);
+  border: 1px solid rgba(125, 211, 252, 0.3);
+  color: #bfdbfe;
+  font-weight: 700;
+}
+
 .todo-form label {
   color: #cbd5e1;
   font-weight: 600;
@@ -193,6 +242,10 @@ button:disabled {
 
 .danger {
   background: linear-gradient(135deg, #fb7185, #ef4444);
+}
+
+.secondary {
+  color: #e2e8f0;
 }
 
 @media (max-width: 720px) {

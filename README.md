@@ -8,6 +8,7 @@ Project ini dibuat untuk tugas Praktikum Sistem Basis Data Modul 10.
 - Backend: Express.js
 - Database: PostgreSQL
 - ORM: Prisma
+- Auth: JWT sederhana dengan username dan password
 
 ## Struktur Folder
 
@@ -34,6 +35,9 @@ Project ini dibuat untuk tugas Praktikum Sistem Basis Data Modul 10.
 - Create todo
 - Read todo
 - Delete todo
+- Register akun
+- Login akun
+- Todo tersimpan per akun
 
 ## Environment Variables
 
@@ -43,6 +47,7 @@ Project ini dibuat untuk tugas Praktikum Sistem Basis Data Modul 10.
 DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DBNAME?schema=public"
 PORT=3000
 CLIENT_ORIGIN=http://localhost:5173
+JWT_SECRET=isi_dengan_string_rahasia
 ```
 
 ### `client/.env`
@@ -84,6 +89,13 @@ npm run dev
 - Create: tambah todo dari form.
 - Read: daftar todo muncul setelah reload atau fetch data.
 - Delete: tekan tombol hapus pada item todo.
+
+## Verifikasi Akun
+
+- Register akun baru dengan username dan password.
+- Login dengan akun yang sama untuk memuat todo milik akun itu.
+- Login dengan akun berbeda untuk melihat daftar todo yang berbeda.
+- Logout lalu login ulang untuk memastikan data akun tetap tersimpan di database.
 
 ## Deploy
 

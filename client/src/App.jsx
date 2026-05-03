@@ -2,34 +2,107 @@ import { useEffect, useMemo, useState } from 'react';
 
 const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
+function getStoredAuth() {
+  try {
+    const raw = localStorage.getItem('todo-auth');
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
 function App() {
+  const [authMode, setAuthMode] = useState('login');
+  const [auth, setAuth] = useState(() => getStoredAuth());
   const [todos, setTodos] = useState([]);
+  const [authForm, setAuthForm] = useState({ username: '', password: '' });
   const [title, setTitle] = useState('');
   const [loading, setLoading] = useState(true);
+  const [authLoading, setAuthLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    loadTodos();
-  }, []);
+    if (auth?.token) {
+      loadTodos(auth.token);
+    } else {
+      setLoading(false);
+    }
+  }, [auth?.token]);
 
   const completedCount = useMemo(() => todos.length, [todos]);
 
-  async function loadTodos() {
+  async function fetchJson(path, options = {}, token) {
+    const response = await fetch(`${apiUrl}${path}`, {
+      ...options,
+      headers: {
+        ...(options.headers || {}),
+        ...(token ? { Authorization: `Bearer ${token}` } : {})
+      }
+    });
+
+    const isJson = response.headers.get('content-type')?.includes('application/json');
+    const payload = isJson ? await response.json() : null;
+
+    if (!response.ok) {
+      throw new Error(payload?.message || 'Permintaan gagal');
+    }
+
+    return payload;
+  }
+
+  async function loadTodos(token) {
     setLoading(true);
     setError('');
     try {
-      const response = await fetch(`${apiUrl}/api/todos`);
-      if (!response.ok) {
-        throw new Error('Gagal mengambil data todo');
-      }
-      const data = await response.json();
+      const data = await fetchJson('/api/todos', {}, token);
       setTodos(data);
     } catch (err) {
       setError(err.message || 'Terjadi kesalahan saat memuat data');
     } finally {
       setLoading(false);
     }
+  }
+
+  async function handleAuthSubmit(event) {
+    event.preventDefault();
+    const username = authForm.username.trim().toLowerCase();
+    const password = authForm.password;
+
+    if (!username || !password) {
+      setError('Username dan password wajib diisi');
+      return;
+    }
+
+    setAuthLoading(true);
+    setError('');
+    try {
+      const payload = await fetchJson(`/api/auth/${authMode}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      });
+
+      const nextAuth = payload;
+      localStorage.setItem('todo-auth', JSON.stringify(nextAuth));
+      setAuth(nextAuth);
+      setAuthForm({ username: '', password: '' });
+      setTodos([]);
+      setLoading(true);
+    } catch (err) {
+      setError(err.message || 'Terjadi kesalahan saat login/register');
+    } finally {
+      setAuthLoading(false);
+    }
+  }
+
+  function handleLogout() {
+    localStorage.removeItem('todo-auth');
+    setAuth(null);
+    setTodos([]);
+    setTitle('');
+    setError('');
+    setLoading(false);
   }
 
   async function handleSubmit(event) {
@@ -43,18 +116,12 @@ function App() {
     setSaving(true);
     setError('');
     try {
-      const response = await fetch(`${apiUrl}/api/todos`, {
+      const newTodo = await fetchJson('/api/todos', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ title: trimmedTitle })
-      });
+      }, auth.token);
 
-      if (!response.ok) {
-        const payload = await response.json().catch(() => null);
-        throw new Error(payload?.message || 'Gagal membuat todo');
-      }
-
-      const newTodo = await response.json();
       setTodos((current) => [newTodo, ...current]);
       setTitle('');
     } catch (err) {
@@ -67,13 +134,9 @@ function App() {
   async function handleDelete(id) {
     setError('');
     try {
-      const response = await fetch(`${apiUrl}/api/todos/${id}`, {
+      await fetchJson(`/api/todos/${id}`, {
         method: 'DELETE'
-      });
-
-      if (!response.ok) {
-        throw new Error('Gagal menghapus todo');
-      }
+      }, auth.token);
 
       setTodos((current) => current.filter((todo) => todo.id !== id));
     } catch (err) {
@@ -81,15 +144,75 @@ function App() {
     }
   }
 
+  if (!auth?.token) {
+    return (
+      <main className="page-shell auth-shell">
+        <section className="hero-card auth-card">
+          <div className="hero-copy">
+            <p className="eyebrow">SBD Modul 10</p>
+            <h1>Login untuk melihat todo milik akunmu</h1>
+            <p className="subtext">
+              Setiap akun punya daftar todo yang terpisah. Saat login ulang, data akun yang sama akan dimuat kembali.
+            </p>
+          </div>
+
+          <div className="auth-toggle">
+            <button type="button" className={authMode === 'login' ? 'tab active' : 'tab'} onClick={() => setAuthMode('login')}>
+              Login
+            </button>
+            <button type="button" className={authMode === 'register' ? 'tab active' : 'tab'} onClick={() => setAuthMode('register')}>
+              Register
+            </button>
+          </div>
+
+          <form className="todo-form auth-form" onSubmit={handleAuthSubmit}>
+            <label htmlFor="username">Username</label>
+            <input
+              id="username"
+              type="text"
+              placeholder="contoh: andi"
+              value={authForm.username}
+              onChange={(event) => setAuthForm((current) => ({ ...current, username: event.target.value }))}
+              maxLength={30}
+            />
+
+            <label htmlFor="password">Password</label>
+            <input
+              id="password"
+              type="password"
+              placeholder="minimal 6 karakter"
+              value={authForm.password}
+              onChange={(event) => setAuthForm((current) => ({ ...current, password: event.target.value }))}
+              maxLength={100}
+            />
+
+            {error ? <div className="alert error">{error}</div> : null}
+
+            <button type="submit" disabled={authLoading}>
+              {authLoading ? 'Memproses...' : authMode === 'login' ? 'Login' : 'Register'}
+            </button>
+          </form>
+        </section>
+      </main>
+    );
+  }
+
   return (
     <main className="page-shell">
       <section className="hero-card">
         <div className="hero-copy">
           <p className="eyebrow">SBD Modul 10</p>
-          <h1>Todo List sederhana dengan React, Express, dan PostgreSQL</h1>
+          <h1>Todo List per akun dengan React, Express, dan PostgreSQL</h1>
           <p className="subtext">
-            Aplikasi ini mendukung Create, Read, dan Delete dengan backend API dan database Neon.
+            Sedang login sebagai <strong>{auth.user?.username}</strong>. Todo yang tampil hanya milik akun ini.
           </p>
+        </div>
+
+        <div className="session-row">
+          <div className="session-badge">@{auth.user?.username}</div>
+          <button type="button" className="secondary" onClick={handleLogout}>
+            Logout
+          </button>
         </div>
 
         <form className="todo-form" onSubmit={handleSubmit}>
@@ -121,7 +244,7 @@ function App() {
         {loading ? (
           <div className="empty-state">Memuat data...</div>
         ) : todos.length === 0 ? (
-          <div className="empty-state">Belum ada todo. Tambahkan item pertama sekarang.</div>
+          <div className="empty-state">Belum ada todo untuk akun ini. Tambahkan item pertama sekarang.</div>
         ) : (
           <ul className="todo-list">
             {todos.map((todo) => (
